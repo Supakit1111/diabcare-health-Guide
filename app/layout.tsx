@@ -13,6 +13,9 @@ export const metadata: Metadata = {
   title: "DiabCare — คู่มือสุขภาพเบาหวาน",
   description:
     "รวมข้อมูลครบจบในที่เดียว ทั้งการรับประทานยา อาหารที่ควรกินและควรเลี่ยง ผลไม้ที่มีน้ำตาลสูง พร้อมเคล็ดลับดูแลสุขภาพสำหรับผู้ป่วยเบาหวาน",
+  icons: {
+    icon: "/notebook.svg",
+  },
 };
 
 export default function RootLayout({
