@@ -4,10 +4,18 @@ import { NextResponse } from "next/server";
 export const dynamic = "force-dynamic";
 
 export async function GET(request) {
-  // ตรวจสอบ Authorization header จาก Vercel Cron (ข้ามตอน dev)
+  // ดึงค่า Search Parameters (ข้ามตอน dev)
   const isDev = process.env.NODE_ENV === "development";
   const authHeader = request.headers.get("authorization");
-  if (!isDev && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  const { searchParams } = new URL(request.url);
+  const secretParam = searchParams.get("secret");
+  const testTime = searchParams.get("test");
+
+  const isValidSecret =
+    authHeader === `Bearer ${process.env.CRON_SECRET}` ||
+    secretParam === process.env.CRON_SECRET;
+
+  if (!isDev && !isValidSecret) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -31,9 +39,6 @@ export async function GET(request) {
     .toString()
     .padStart(2, "0")}`;
 
-  // รองรับ test mode: ใช้ ?test=HH:mm เพื่อทดสอบเวลาต่างๆ
-  const { searchParams } = new URL(request.url);
-  const testTime = searchParams.get("test");
   const timeToCheck = testTime || currentTime;
 
   // กำหนดข้อความแจ้งเตือนตามช่วงเวลา
